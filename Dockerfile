@@ -81,7 +81,7 @@ RUN chmod +x /root/bin/*.sh
 # Fix mariadb issue
 RUN dnf install hostname -y; dnf clean all;
 RUN rm -rf /etc/my.cnf.d/auth_gssapi.cnf ; rm -rf /var/lib/mysql; echo -e 'innodb_buffer_pool_size=16M\ninnodb_additional_mem_pool_size=500K\ninnodb_log_buffer_size=500K\ninnodb_thread_concurrency=2' >>/etc/my.cnf.d/mariadb-server.cnf
-RUN chown -R mysql /var/lib/mysql/ ;  mysql_install_db --user=mysql --ldata=/var/lib/mysql ; 
+RUN chown -R mysql /var/lib/mysql/ ;  mysql_install_db --user=mysql ;
 
 # Extract the tar files:
 ##   <aka> ## RUN dnf install -y tar python2 ; dnf clean all;
