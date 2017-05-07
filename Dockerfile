@@ -2,7 +2,7 @@ FROM fedora
 
 # Setup mysql server
 
-RUN dnf install -y mysql-server; dnf clean all
+RUN dnf install -y mariadb-server httpd php openssh-server unzip wget java-1.8.0-openjdk hostname ; dnf clean all;
 ADD my.cnf /etc/mysql/conf.d/my.cnf
 
 # Remove pre-installed database
@@ -21,7 +21,6 @@ ENV PHP_POST_MAX_SIZE 10M
 
 
 # install sshd and apache 
-RUN dnf clean all; dnf install -y  httpd php openssh-server unzip ; dnf clean all;
 RUN useradd -c "Vuln User" -m guest
 RUN echo "guest:guest"|chpasswd
 RUN echo "root:password" |chpasswd
@@ -32,7 +31,6 @@ RUN echo "root:password" |chpasswd
 RUN mkdir /var/www/html/dvwa
 ADD https://github.com/ethicalhack3r/DVWA/archive/master.tar.gz /var/www/html/dvwa/
 
-RUN dnf install -y wget ; dnf clean all;
 
 # Deploy Mutillidae
 RUN \
@@ -49,9 +47,8 @@ RUN \
 
 
 # Add webgoat
-RUN dnf install -y  java-1.8.0-openjdk; dnf clean all
 RUN mkdir /root/webgoat
-RUN cd /root/webgoat; curl --header 'Host: github.com' --header 'User-Agent: Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0' --header 'Accept: */*' --header 'Accept-Language: en-US,en;q=0.5' --header 'Content-Type: application/x-www-form-urlencoded' --header 'Cookie: logged_in=yes; _ga=GA1.2.682912172.1471179804; _octo=GH1.1.694985160.1471179804; user_session=KMZl4SQVRl6ox7GSv_8rirPQbkHGxmojaaIW5AjyXiGzNyAl; __Host-user_session_same_site=KMZl4SQVRl6ox7GSv_8rirPQbkHGxmojaaIW5AjyXiGzNyAl; dotcom_user=raj77in; _gh_sess=eyJzZXNzaW9uX2lkIjoiMWIxYWE3MmU1MWE1NGM5OTJlZWE1ODIyMWJkZWM1M2YiLCJzcHlfcmVwbyI6IldlYkdvYXQvV2ViR29hdCIsInNweV9yZXBvX2F0IjoxNDk0MDA2OTQ3fQ%3D%3D--b59a2f5ad8d1f2fea98954c69dc381bd8b3cb1de; _gat=1; tz=UTC' 'https://github.com/WebGoat/WebGoat/releases/download/7.1/webgoat-container-7.1-exec.jar' -O -J -L
+RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/7.1/webgoat-container-7.1-exec.jar' -O -J -L
 
 # Run DVNA
 ##   <aka> ## ENV VERSION master
@@ -79,14 +76,21 @@ ADD index.html /var/www/html
 RUN chmod +x /root/bin/*.sh
 
 # Fix mariadb issue
-RUN dnf install hostname -y; dnf clean all;
 RUN rm -rf /etc/my.cnf.d/auth_gssapi.cnf ; rm -rf /var/lib/mysql; echo -e 'innodb_buffer_pool_size=16M\ninnodb_additional_mem_pool_size=500K\ninnodb_log_buffer_size=500K\ninnodb_thread_concurrency=2' >>/etc/my.cnf.d/mariadb-server.cnf
-RUN chown -R mysql /var/lib/mysql/ ;  mysql_install_db --user=mysql ;
+RUN chown -R mysql /var/lib/mysql/ ;  mysql_install_db --user=mysql --ldata=/var/lib/mysql;
+# RUN mkdir -p /var/lib/mysql/; chown -R mysql /var/lib/mysql/ ;  cd /var/lib/mysql; /usr/libexec/mysqld  --initialize-insecure  --user=mysql --datadir=/var/lib/mysql
 
 # Extract the tar files:
 ##   <aka> ## RUN dnf install -y tar python2 ; dnf clean all;
 ##   <aka> ## RUN cd /var/www/html/dvwa/; tar xvf master.tar.gz ; cd DVWA-master; cp config/config.inc.php.dist config/config.inc.php
 ##   <aka> ## RUN cd /var/www/html/commix/; tar xvf master.tar.gz
+
+## OWASP Bricks
+RUN wget -O /var/www/html/bricks.zip 'http://sourceforge.net/projects/owaspbricks/files/Tuivai%20-%202.2/OWASP%20Bricks%20-%20Tuivai.zip/download'
+RUN mkdir /var/www/html/owasp-bricks; cd /var/www/html/owasp-bricks; unzip /var/www/html/bricks.zip
+
+RUN dnf install -y php-mysqlnd php-gd
+RUN cd /var/www/html/dvwa; tar xvf master.tar.gz; cd DVWA-master/; mv config/config.inc.php{.dist,}
 
 
 EXPOSE 22 80 8080 3000 3306

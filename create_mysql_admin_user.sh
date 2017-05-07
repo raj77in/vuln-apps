@@ -10,7 +10,7 @@ while [[ $RET -ne 0 ]]; do
     RET=$?
 done
 
-PASS=${MYSQL_PASS:-$(pwgen -s 12 1)}
+PASS=${MYSQL_PASS:-PPAAssWW00RRdd}
 _word=$( [ ${MYSQL_PASS} ] && echo "preset" || echo "random" )
 echo "=> Creating MySQL admin user with ${_word} password"
 
@@ -30,3 +30,6 @@ echo "MySQL user 'root' has no password but only allows local connections"
 echo "========================================================================"
 
 mysqladmin -uroot shutdown
+sed -i 's/static public $mMySQLDatabasePassword =.*/static public $mMySQLDatabasePassword = \"'$PASS'\";/g' /var/www/html/mutillidae/classes/MySQLHandler.php
+sed -i 's/p@ssw0rd/'$PASS'/g' /var/www/html/dvwa/DVWA-master/config/config.inc.php
+# /var/www/html/owasp-bricks/bricks/LocalSettings.php
