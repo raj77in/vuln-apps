@@ -69,12 +69,6 @@ RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download
 RUN mkdir /var/www/html/commix
 ADD https://github.com/commixproject/commix/archive/master.tar.gz /var/www/html/commix
 
-ADD start.sh /root/bin
-# Add index file
-ADD index.html /var/www/html
-
-RUN chmod +x /root/bin/*.sh
-
 # Fix mariadb issue
 RUN rm -rf /etc/my.cnf.d/auth_gssapi.cnf ; rm -rf /var/lib/mysql; echo -e 'innodb_buffer_pool_size=16M\ninnodb_additional_mem_pool_size=500K\ninnodb_log_buffer_size=500K\ninnodb_thread_concurrency=2' >>/etc/my.cnf.d/mariadb-server.cnf
 RUN chown -R mysql /var/lib/mysql/ ;  mysql_install_db --user=mysql --ldata=/var/lib/mysql;
@@ -92,6 +86,12 @@ RUN mkdir /var/www/html/owasp-bricks; cd /var/www/html/owasp-bricks; unzip /var/
 RUN dnf install -y php-mysqlnd php-gd
 RUN cd /var/www/html/dvwa; tar xvf master.tar.gz; cd DVWA-master/; mv config/config.inc.php{.dist,}
 
+
+ADD start.sh /root/bin
+# Add index file
+ADD index.html /var/www/html
+
+RUN chmod +x /root/bin/*.sh
 
 EXPOSE 22 80 8080 3000 3306
 

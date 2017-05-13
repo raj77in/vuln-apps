@@ -14,9 +14,14 @@
 #        AUTHOR: Amit Agarwal (aka), amit.agarwal@mobileum.com
 #  ORGANIZATION: Mobileum
 #       CREATED: 04/30/2017 22:08
-# Last modified: Sun May 07, 2017  01:46PM
+# Last modified: Sat May 13, 2017  05:41PM
 #      REVISION:  ---
 #===============================================================================
+
+PASS=${MYSQL_PASS:-PPAAssWW00RRdd}
+_word=$( [ ${MYSQL_PASS} ] && echo "preset" || echo "random" )
+echo "=> Creating MySQL admin user with ${_word} password"
+mysql -u root -e "update user set password=PASSWORD('$PASS') where User='root';" mysql
 
 
 chown apache:apache -R /var/www/html
@@ -47,6 +52,15 @@ su - dvna -c node dvna.js &
 cd /root/webgoat
 java -Djava.security.egd=file:/dev/urandom -jar  webgoat-container-7.1-exec.jar &
 
+
+## Fix Bricks..
+sed -i 's/mysqli_query(/mysqli_query($con,/' /var/www/html/owasp-bricks/bricks/config/setup.php
+
+cd /var/www/html/owasp-bricks/bricks
+grep -r -i -l mysqli_query *|while read line
+do
+    sed -i 's/mysqli_query(/mysqli_query($con,/' $line
+done
 
 
 # Run apache
