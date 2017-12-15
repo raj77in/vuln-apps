@@ -50,6 +50,7 @@ RUN \
 RUN mkdir /root/webgoat
 # RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/7.1/webgoat-container-7.1-exec.jar' -O -J -L
 RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/v8.0.0.M5/webgoat-server-8.0.0.M5.jar' -O -J -L
+RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/v8.0.0.M5/webwolf-8.0.0.M5.jar' -O -J -L
 
 # Run DVNA
 ##   <aka> ## ENV VERSION master
