@@ -1,17 +1,24 @@
-# viln-apps
+# vuln-apps
 Collection of Vulnerable apps
 
 - WebGoat
 - DVWA
+- OWASP Bricks
+- Mutillidae
+- commix
 - More to come.
 
 Usage
 =====
 
-<code>
+```
 docker pull raj77in/vuln-apps
-docker run -p 80:80 -p 8080:8080 raj77in/vuln-apps
-</code>
+docker run -d -p 80:80 -p 8080:8080 raj77in/vuln-apps
+```
 
 After this you can visit index page at:
 http://localhost/
+
+Build from Docker file:
+```docker build -t raj77in/vuln-apps .```
+

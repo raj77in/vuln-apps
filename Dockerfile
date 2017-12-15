@@ -2,7 +2,7 @@ FROM fedora
 
 # Setup mysql server
 
-RUN dnf install -y mariadb-server httpd php openssh-server unzip wget java-1.8.0-openjdk hostname ; dnf clean all;
+RUN dnf install -y mariadb-server httpd php openssh-server unzip wget java-1.8.0-openjdk hostname && dnf clean all;
 ADD my.cnf /etc/mysql/conf.d/my.cnf
 
 # Remove pre-installed database
@@ -28,7 +28,7 @@ RUN echo "root:password" |chpasswd
 
 # Add DVWA
 #
-RUN mkdir /var/www/html/dvwa
+RUN mkdir -p /var/www/html/dvwa
 ADD https://github.com/ethicalhack3r/DVWA/archive/master.tar.gz /var/www/html/dvwa/
 
 
@@ -48,7 +48,8 @@ RUN \
 
 # Add webgoat
 RUN mkdir /root/webgoat
-RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/7.1/webgoat-container-7.1-exec.jar' -O -J -L
+# RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/7.1/webgoat-container-7.1-exec.jar' -O -J -L
+RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/v8.0.0.M5/webgoat-server-8.0.0.M5.jar' -O -J -L
 
 # Run DVNA
 ##   <aka> ## ENV VERSION master

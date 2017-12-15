@@ -14,7 +14,7 @@
 #        AUTHOR: Amit Agarwal (aka), amit.agarwal@mobileum.com
 #  ORGANIZATION: Mobileum
 #       CREATED: 04/30/2017 22:08
-# Last modified: Sat May 13, 2017  05:41PM
+# Last modified: Fri Dec 15, 2017  11:55PM
 #      REVISION:  ---
 #===============================================================================
 
@@ -50,7 +50,7 @@ su - dvna -c node dvna.js &
 
 # Run WebGoat
 cd /root/webgoat
-java -Djava.security.egd=file:/dev/urandom -jar  webgoat-container-7.1-exec.jar &
+java -Djava.security.egd=file:/dev/urandom -jar  webgoat-server-8.0.0.M5.jar &
 
 
 ## Fix Bricks..
