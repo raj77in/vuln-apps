@@ -2,7 +2,8 @@ FROM fedora
 
 # Setup mysql server
 
-RUN dnf install -y mariadb-server httpd php openssh-server unzip wget java-1.8.0-openjdk hostname && dnf clean all;
+RUN dnf install -y mariadb-server httpd php openssh-server unzip wget java-11-openjdk hostname php-common php-pecl-apcu php-cli php-pear php-pdo php-mysqlnd php-pgsql php-pecl-mongodb php-pecl-memcache php-pecl-memcached php-gd php-mbstring php-mcrypt php-xml
+
 ADD my.cnf /etc/mysql/conf.d/my.cnf
 
 # Remove pre-installed database
@@ -49,8 +50,8 @@ RUN \
 # Add webgoat
 RUN mkdir /root/webgoat
 # RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/7.1/webgoat-container-7.1-exec.jar' -O -J -L
-RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/v8.0.0.M5/webgoat-server-8.0.0.M5.jar' -O -J -L
-RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/v8.0.0.M5/webwolf-8.0.0.M5.jar' -O -J -L
+RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/v8.0.0.M25/webgoat-server-8.0.0.M25.jar' -O -J -L
+RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/v8.0.0.M25/webwolf-8.0.0.M25.jar' -O -J -L
 
 # Run DVNA
 ##   <aka> ## ENV VERSION master
@@ -72,8 +73,8 @@ RUN mkdir /var/www/html/commix
 ADD https://github.com/commixproject/commix/archive/master.tar.gz /var/www/html/commix
 
 # Fix mariadb issue
-RUN rm -rf /etc/my.cnf.d/auth_gssapi.cnf ; rm -rf /var/lib/mysql; echo -e 'innodb_buffer_pool_size=16M\ninnodb_additional_mem_pool_size=500K\ninnodb_log_buffer_size=500K\ninnodb_thread_concurrency=2' >>/etc/my.cnf.d/mariadb-server.cnf
-RUN chown -R mysql /var/lib/mysql/ ;  mysql_install_db --user=mysql --ldata=/var/lib/mysql;
+RUN rm -rf /etc/my.cnf.d/auth_gssapi.cnf ; rm -rf /var/lib/mysql; echo -e 'innodb_buffer_pool_size=16M\ninnodb_log_buffer_size=500K\ninnodb_thread_concurrency=2' >>/etc/my.cnf.d/mariadb-server.cnf
+RUN  mysql_install_db --user=mysql --ldata=/var/lib/mysql; chown -R mysql /var/lib/mysql/
 # RUN mkdir -p /var/lib/mysql/; chown -R mysql /var/lib/mysql/ ;  cd /var/lib/mysql; /usr/libexec/mysqld  --initialize-insecure  --user=mysql --datadir=/var/lib/mysql
 
 # Extract the tar files:
@@ -85,7 +86,7 @@ RUN chown -R mysql /var/lib/mysql/ ;  mysql_install_db --user=mysql --ldata=/var
 RUN wget -O /var/www/html/bricks.zip 'http://sourceforge.net/projects/owaspbricks/files/Tuivai%20-%202.2/OWASP%20Bricks%20-%20Tuivai.zip/download'
 RUN mkdir /var/www/html/owasp-bricks; cd /var/www/html/owasp-bricks; unzip /var/www/html/bricks.zip
 
-RUN dnf install -y php-mysqlnd php-gd
+RUN dnf install -y php-mysqlnd php-gd && dnf clean all
 RUN cd /var/www/html/dvwa; tar xvf master.tar.gz; cd DVWA-master/; mv config/config.inc.php{.dist,}
 
 
@@ -94,6 +95,12 @@ ADD start.sh /root/bin
 ADD index.html /var/www/html
 
 RUN chmod +x /root/bin/*.sh
+
+
+RUN dnf install procps-ng -y && dnf clean all
+ADD https://github.com/bkimminich/juice-shop/releases/download/v8.6.2/juice-shop-8.6.2_node8_linux_x64.tgz /var/www/html
+RUN tar xvf juice-shop-8.6.2_node8_linux_x64.tgz && mv juice-shop_8.6.2 juice
+
 
 EXPOSE 22 80 8080 3000 3306
 

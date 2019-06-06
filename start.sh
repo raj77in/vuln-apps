@@ -14,7 +14,7 @@
 #        AUTHOR: Amit Agarwal (aka), amit.agarwal@mobileum.com
 #  ORGANIZATION: Mobileum
 #       CREATED: 04/30/2017 22:08
-# Last modified: Sat Dec 16, 2017  12:49AM
+# Last modified: Fri Jun 07, 2019  12:31AM
 #      REVISION:  ---
 #===============================================================================
 
@@ -50,8 +50,8 @@ su - dvna -c node dvna.js &
 
 # Run WebGoat
 cd /root/webgoat
-java -Djava.security.egd=file:/dev/urandom -jar  webwolf-8.0.0.M5.jar &
-java -Djava.security.egd=file:/dev/urandom -jar  webwolf-8.0.0.M5.jar &
+java -Djava.security.egd=file:/dev/urandom -jar  webwolf-8.0.0.M25.jar --server.address=0.0.0.0 &
+java -Djava.security.egd=file:/dev/urandom -jar  webgoat-server-8.0.0.M25.jar --server.address=0.0.0.0 &
 
 
 ## Fix Bricks..
@@ -63,7 +63,8 @@ do
     sed -i 's/mysqli_query(/mysqli_query($con,/' $line
 done
 
-
+mdkri /run/php-fpm
+php-fpm
 # Run apache
-/usr/sbin/apachectl -D FOREGROUND
+/usr/sbin/httpd -D FOREGROUND
 
