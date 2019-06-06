@@ -99,7 +99,7 @@ RUN chmod +x /root/bin/*.sh
 
 RUN dnf install procps-ng -y && dnf clean all
 ADD https://github.com/bkimminich/juice-shop/releases/download/v8.6.2/juice-shop-8.6.2_node8_linux_x64.tgz /var/www/html
-RUN tar xvf juice-shop-8.6.2_node8_linux_x64.tgz && mv juice-shop_8.6.2 juice
+RUN cd /var/www/html && tar xvf juice-shop-8.6.2_node8_linux_x64.tgz && mv juice-shop_8.6.2 juice
 
 
 EXPOSE 22 80 8080 3000 3306
