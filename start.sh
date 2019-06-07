@@ -14,20 +14,21 @@
 #        AUTHOR: Amit Agarwal (aka), amit.agarwal@mobileum.com
 #  ORGANIZATION: Mobileum
 #       CREATED: 04/30/2017 22:08
-# Last modified: Fri Jun 07, 2019  12:31AM
+# Last modified: Fri Jun 07, 2019  11:27PM
 #      REVISION:  ---
 #===============================================================================
 
 PASS=${MYSQL_PASS:-PPAAssWW00RRdd}
 _word=$( [ ${MYSQL_PASS} ] && echo "preset" || echo "random" )
+# Run mysqld and wait for it to start
+nohup mysqld_safe &>/dev/null &
+sleep 5
+
 echo "=> Creating MySQL admin user with ${_word} password"
 mysql -u root -e "update user set password=PASSWORD('$PASS') where User='root';" mysql
 
 
-chown apache:apache -R /var/www/html
-
-# Run mysqld
-mysqld_safe &
+# chown apache:apache -R /var/www/html
 
 sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE}/" \
     -e "s/^allow_url_include.*/allow_url_include = On/" \
@@ -63,8 +64,30 @@ do
     sed -i 's/mysqli_query(/mysqli_query($con,/' $line
 done
 
-mdkri /run/php-fpm
+## Setup mutillidae
+sed -i '/DB_PASSWORD/ s/mutillidae/'$PASS'/' /var/www/html/mutillidae/includes/database-config.php
+
+
+#Setup DVWS
+cd /var/www/html/dvws
+sed -i 's/localhost/127.0.0.1/g' instructions.php
+sed -i "/127.0.0.1/ s/''/'$PASS'/" instructions.php
+sed -i 's/localhost/127.0.0.1/g' about/instructions.php
+sed -i "/127.0.0.1/ s/''/'$PASS'/" about/instructions.php
+
+# Setup bWAPP
+cd /var/www/html/bwapp/bWAPP
+sed -i '/db_server/ s/localhost/127.0.0.1/' admin/settings.php
+sed -i '/db_pass/ s/bug/'$PASS'/' admin/settings.php
+
+# XVWA
+mysql -u root -p$PASS -e "CREATE DATABASE IF NOT EXISTS xvwa"
+
+
+
+# php-fpm is required to ensure that php works
+mkdir /run/php-fpm
 php-fpm
 # Run apache
-/usr/sbin/httpd -D FOREGROUND
-
+/usr/sbin/httpd
+mysqld_safe

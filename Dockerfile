@@ -43,7 +43,7 @@ RUN \
   rm -rf /root/mutillidae
 
 RUN \
-  sed -i 's/static public \$mMySQLDatabaseUsername =.*/static public \$mMySQLDatabaseUsername = "admin";/g' /var/www/html/mutillidae/classes/MySQLHandler.php && \
+  sed -i 's/static public \$mMySQLDatabaseUsername =.*/static public \$mMySQLDatabaseUsername = "root";/g' /var/www/html/mutillidae/classes/MySQLHandler.php && \
   echo "sed -i 's/static public \$mMySQLDatabasePassword =.*/static public \$mMySQLDatabasePassword = \\\"'\$PASS'\\\";/g' /var/www/html/mutillidae/classes/MySQLHandler.php" >> //root/bin/create_mysql_admin_user.sh
 
 
@@ -52,21 +52,6 @@ RUN mkdir /root/webgoat
 # RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/7.1/webgoat-container-7.1-exec.jar' -O -J -L
 RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/v8.0.0.M25/webgoat-server-8.0.0.M25.jar' -O -J -L
 RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/v8.0.0.M25/webwolf-8.0.0.M25.jar' -O -J -L
-
-# Run DVNA
-##   <aka> ## ENV VERSION master
-##   <aka> ## RUN dnf install -y tar npm ; dnf clean all;
-##   <aka> ## WORKDIR /DVNA-$VERSION/
-##   <aka> ## RUN useradd -d /DVNA-$VERSION/ dvna \
-##   <aka> ## 	&& chown dvna: /DVNA-$VERSION/
-##   <aka> ## USER dvna
-##   <aka> ## RUN curl -sSL 'https://github.com/raj77in/dvna-1/archive/master.tar.gz' \
-##   <aka> ## 	| tar -vxz -C /DVNA-$VERSION/ \
-##   <aka> ## 	&& cd /DVNA-$VERSION/dvna-1-master \
-##   <aka> ## 	&& npm set progress=false \
-##   <aka> ## 	&& npm install
-
-
 
 # Add commix
 RUN mkdir /var/www/html/commix
@@ -101,7 +86,27 @@ RUN dnf install procps-ng -y && dnf clean all
 ADD https://github.com/bkimminich/juice-shop/releases/download/v8.6.2/juice-shop-8.6.2_node8_linux_x64.tgz /var/www/html
 RUN cd /var/www/html && tar xvf juice-shop-8.6.2_node8_linux_x64.tgz && mv juice-shop_8.6.2 juice
 
+ADD https://github.com/snoopysecurity/dvws/archive/master.tar.gz /var/www/html
+RUN cd /var/www/html; tar xvf master.tar.gz && rm -rf master.tar.gz && mv dvws-master dvws
 
-EXPOSE 22 80 8080 3000 3306
+ADD https://github.com/commixproject/commix-testbed/archive/master.tar.gz /var/www/html
+RUN cd /var/www/html; tar xvf master.tar.gz; rm -rf master.tar.gz && mv commix-testbed-master commix-testbed
+
+RUN mkdir /var/www/html/bwapp
+ADD https://sourceforge.net/projects/bwapp/files/bWAPP/bWAPP_latest.zip/download  /var/www/html/bwapp/bwapp.zip
+RUN cd /var/www/html/bwapp; unzip bwapp.zip; rm -rf bwapp.zip; cd bWAPP; chmod 777 passwords/ images/ documents/ logs/ ;
+
+#XVWA
+RUN dnf install git sudo -y && dnf clean all 
+ADD https://raw.githubusercontent.com/s4n7h0/Script-Bucket/master/Bash/xvwa-setup.sh /var/www/html
+RUN cd /var/www/html; sed -i 's/read uname/uname=root/' xvwa-setup.sh && \
+    sed -i "s/read pass/pass=$PASS/" xvwa-setup.sh && \
+    sed -i "s;read webroot;webroot=/var/www/html;" xvwa-setup.sh  && \
+    bash xvwa-setup.sh && \
+    sed -i 's/localhost/127.0.0.1/' xvwa/config.php
+# wget https://raw.githubusercontent.com/stamparm/DSVW/master/dsvw.py
+
+
+EXPOSE 22:22 80:80 8080:8080 3000:3000 3306
 
 CMD "/root/bin/start.sh"
