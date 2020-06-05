@@ -11,11 +11,13 @@ while [[ $RET -ne 0 ]]; do
 done
 
 PASS=${MYSQL_PASS:-PPAAssWW00RRdd}
-_word=$( [ ${MYSQL_PASS} ] && echo "preset" || echo "random" )
-echo "=> Creating MySQL admin user with ${_word} password"
 
-mysql -uroot -e "CREATE USER 'admin'@'%' IDENTIFIED BY '$PASS'"
-mysql -uroot -e "GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION"
+echo "=> Creating MySQL admin user with ${PASS} password"
+
+mysql -uroot mysql -e "CREATE USER 'admin'@'%' IDENTIFIED BY '$PASS'"
+mysql -uroot mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION"
+mysql -uroot mysql -e "FLUSH PRIVILEGES;"
+printf "y\nG8yHPp-i9jwMbKqhutqUcWM_E5W7XK9O\nn\n\n\n\n\n\n\n\n\n"|sudo mysql_secure_installation 2>&1
 
 
 echo "=> Done!"
@@ -34,3 +36,4 @@ sed -i 's/static public $mMySQLDatabasePassword =.*/static public $mMySQLDatabas
 sed -i 's/p@ssw0rd/'$PASS'/g' /var/www/html/dvwa/DVWA-master/config/config.inc.php
 
 sed -i 's/.dbpass = .*password/$dbpass = "'"$PASS"'";/'  /var/www/html/owasp-bricks/bricks/LocalSettings.php
+sed -i 's/.host = .*/$host = "127.0.0.1";/'  /var/www/html/owasp-bricks/bricks/LocalSettings.php
