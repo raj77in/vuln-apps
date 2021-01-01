@@ -1,15 +1,9 @@
 #!/bin/bash
 
-nohup /usr/bin/mysqld_safe > /dev/null 2>&1 &
-sleep 3
-PASS=${MYSQL_PASS}
 
-echo "=> Creating MySQL admin user with ${PASS} password"
-
-mysql -uroot mysql -e "CREATE USER 'admin'@'%' IDENTIFIED BY '$PASS'"
-mysql -uroot mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION"
-mysql -uroot mysql -e "FLUSH PRIVILEGES;"
-printf "y\n${PASS}\nn\n\n\n\n\n\n\n\n\n"|sudo mysql_secure_installation 2>&1
+PASS=${MYSQL_PASS:-PPAAssWW00RRdd}
+killall -9 mysqld_safe
+printf "\ny\n$PASS\n$PASS\nn\n\n\n\n\n\n\n\n\n"|mysql_secure_installation 2>&1
 
 
 echo "=> Done!"
