@@ -2,7 +2,7 @@ FROM fedora
 
 # Setup mysql server
 
-RUN dnf install -y mariadb-server httpd php openssh-server unzip wget java-11-openjdk hostname php-common php-pecl-apcu php-cli php-pear php-pdo php-mysqlnd php-pgsql php-pecl-mongodb php-pecl-memcache php-pecl-memcached php-gd php-mbstring php-mcrypt php-xml iproute2 curl
+RUN dnf install -y mariadb-server httpd php openssh-server unzip wget java-11-openjdk hostname php-common php-pecl-apcu php-cli php-pear php-pdo php-mysqlnd php-pgsql php-pecl-mongodb php-pecl-memcache php-pecl-memcached php-gd php-mbstring php-mcrypt php-xml iproute2
 
 ADD my.cnf /etc/mysql/conf.d/my.cnf
 
