@@ -14,13 +14,14 @@
 #        AUTHOR: Amit Agarwal (aka), amit.agarwal@mobileum.com
 #  ORGANIZATION: Mobileum
 #       CREATED: 04/30/2017 22:08
-# Last modified: Mon Jan 11, 2021  11:00AM
+# Last modified: Mon Jan 11, 2021  12:16PM
 #      REVISION:  ---
 #===============================================================================
 
-rpass=$( < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo; ) 
+# rpass=$( < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo; ) 
 
-PASS=${MYSQL_PASS:-$rpass}
+
+export PASS=${MYSQL_PASS:-PPAAssWW00RRdd}
 echo $PASS > ~/mysql_password.txt
 _word=$( [ ${MYSQL_PASS} ] && echo "preset" || echo "random" )
 # Run mysqld and wait for it to start
