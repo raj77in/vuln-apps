@@ -2,7 +2,7 @@ FROM fedora
 
 # Setup mysql server
 
-RUN dnf install -y mariadb-server httpd php openssh-server unzip wget java-11-openjdk hostname php-common php-pecl-apcu php-cli php-pear php-pdo php-mysqlnd php-pgsql php-pecl-mongodb php-pecl-memcache php-pecl-memcached php-gd php-mbstring php-mcrypt php-xml
+RUN dnf install -y mariadb-server httpd php openssh-server unzip wget java-11-openjdk hostname php-common php-pecl-apcu php-cli php-pear php-pdo php-mysqlnd php-pgsql php-pecl-mongodb php-pecl-memcache php-pecl-memcached php-gd php-mbstring php-mcrypt php-xml iproute2 curl
 
 ADD my.cnf /etc/mysql/conf.d/my.cnf
 
@@ -31,6 +31,7 @@ RUN echo "root:password" |chpasswd
 #
 RUN mkdir -p /var/www/html/dvwa
 ADD https://github.com/ethicalhack3r/DVWA/archive/master.tar.gz /var/www/html/dvwa/
+ADD dvwa-install.sh /root/bin/dvwa-install.sh
 
 
 # Deploy Mutillidae

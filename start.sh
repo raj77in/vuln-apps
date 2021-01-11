@@ -14,7 +14,7 @@
 #        AUTHOR: Amit Agarwal (aka), amit.agarwal@mobileum.com
 #  ORGANIZATION: Mobileum
 #       CREATED: 04/30/2017 22:08
-# Last modified: Fri Jun 05, 2020  07:04PM
+# Last modified: Mon Jan 11, 2021  11:00AM
 #      REVISION:  ---
 #===============================================================================
 
@@ -38,10 +38,6 @@ else
 fi
 MYSQL_PASS=$PASS /root/bin/create_mysql_admin_user.sh
 
-mysql -u root -e "update user set password=PASSWORD('$PASS') where User='root';" mysql
-printf "\ny\n$PASS\n$PASS\n\n\n\n\n\n\n\n\n\n"|sudo mysql_secure_installation 2>&1
-mysql -uroot mysql -e "FLUSH PRIVILEGES;"
-
 # mysql_* are deprecated...
 cd /var/www/html
 grep -r -i -l mysql_ *|sort|uniq|while read line
@@ -51,6 +47,8 @@ done
 
 chown apache:apache /var/www/html/
 chmod 777  /var/www/html/dvwa/DVWA-master/hackable/uploads  /var/www/html/dvwa/DVWA-master/external/phpids/0.6/lib/IDS/tmp/phpids_log.txt /var/www/html/dvwa/DVWA-master/config
+
+/root/bin/dvwa-install.sh
 # Run DVNA
 su - dvna -c node dvna.js &
 
