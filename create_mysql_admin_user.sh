@@ -4,6 +4,8 @@
 export PASS=${MYSQL_PASS:-PPAAssWW00RRdd}
 killall -9 mysqld_safe
 mysqld_safe &
+## Without sleep the script will fail.
+sleep 3
 printf "\ny\ny\n$PASS\n$PASS\ny\n\n\n\n\n\n\n\n\n"|mysql_secure_installation 2>&1
 
 
