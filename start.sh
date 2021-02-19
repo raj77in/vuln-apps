@@ -14,7 +14,7 @@
 #        AUTHOR: Amit Agarwal (aka), amit.agarwal@mobileum.com
 #  ORGANIZATION: Mobileum
 #       CREATED: 04/30/2017 22:08
-# Last modified: Mon Jan 11, 2021  12:16PM
+# Last modified: Fri Feb 19, 2021  05:27PM
 #      REVISION:  ---
 #===============================================================================
 
@@ -55,8 +55,8 @@ su - dvna -c node dvna.js &
 
 # Run WebGoat
 cd /root/webgoat
-java -Djava.security.egd=file:/dev/urandom -jar  webwolf-8.0.0.M25.jar --server.address=0.0.0.0 >/root/webwolf.log &
-java -Djava.security.egd=file:/dev/urandom -jar  webgoat-server-8.0.0.M25.jar --server.address=0.0.0.0 >/root/webgoat.log &
+java -Djava.security.egd=file:/dev/urandom -jar  webwolf-8.1.0.jar --server.address=0.0.0.0 >/root/webwolf.log &
+java -Djava.security.egd=file:/dev/urandom -jar  webgoat-server-8.1.0.jar --server.address=0.0.0.0 >/root/webgoat.log &
 
 
 ## Fix Bricks..
@@ -93,8 +93,9 @@ mysql -u root -p$PASS -e "CREATE DATABASE IF NOT EXISTS xvwa"
 mkdir /run/php-fpm
 php-fpm &
 # Run apache
+sed -i 's;SetHandler .*;Handler application/x-httpd-php;' /etc/httpd/conf.d/php.conf
 /usr/sbin/httpd &
-mysqld_safe
+mysqld_safe &
 
 
 echo "Mysql password for root is set to :: $(cat  ~/mysql_password.txt)"

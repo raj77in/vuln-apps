@@ -22,3 +22,10 @@ http://localhost/
 Build from Docker file:
 ```docker build -t raj77in/vuln-apps .```
 
+
+To use with podman
+```bash
+podman run -d -P raj77in/vuln-apps
+podman port -l
+```
+

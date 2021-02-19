@@ -51,8 +51,11 @@ RUN \
 # Add webgoat
 RUN mkdir /root/webgoat
 # RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/7.1/webgoat-container-7.1-exec.jar' -O -J -L
-RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/v8.0.0.M25/webgoat-server-8.0.0.M25.jar' -O -J -L
-RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/v8.0.0.M25/webwolf-8.0.0.M25.jar' -O -J -L
+# RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/v8.0.0.M25/webgoat-server-8.0.0.M25.jar' -O -J -L
+RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/v8.1.0/webgoat-server-8.1.0.jar' -O -J -L
+
+# RUN cd /root/webgoat; curl 'https://github.com/WebGoat/WebGoat/releases/download/v8.0.0.M25/webwolf-8.0.0.M25.jar' -O -J -L
+RUN cd /root/webgoat; curl ''https://github.com/WebGoat/WebGoat/releases/download/v8.1.0/webwolf-8.1.0.jar -O -J -L
 
 # Add commix
 RUN mkdir /var/www/html/commix
@@ -84,8 +87,9 @@ RUN chmod +x /root/bin/*.sh
 
 
 RUN dnf install procps-ng -y && dnf clean all
-ADD https://github.com/bkimminich/juice-shop/releases/download/v8.6.2/juice-shop-8.6.2_node8_linux_x64.tgz /var/www/html
-RUN cd /var/www/html && tar xvf juice-shop-8.6.2_node8_linux_x64.tgz && mv juice-shop_8.6.2 juice
+# ADD https://github.com/bkimminich/juice-shop/releases/download/v8.6.2/juice-shop-8.6.2_node8_linux_x64.tgz /var/www/html
+ADD https://github.com/bkimminich/juice-shop/releases/download/v12.6.1/juice-shop-12.6.1_node14_linux_x64.tgz /var/www/html
+RUN cd /var/www/html && tar xvf juice-shop-12.6.1_node14_linux_x64.tgz && mv juice-shop_12.6.1 juice
 
 ADD https://github.com/snoopysecurity/dvws/archive/master.tar.gz /var/www/html
 RUN cd /var/www/html; tar xvf master.tar.gz && rm -rf master.tar.gz && mv dvws-master dvws
@@ -101,13 +105,16 @@ RUN cd /var/www/html/bwapp; unzip bwapp.zip; rm -rf bwapp.zip; cd bWAPP; chmod 7
 RUN dnf install git sudo -y && dnf clean all 
 ADD https://raw.githubusercontent.com/s4n7h0/Script-Bucket/master/Bash/xvwa-setup.sh /var/www/html
 RUN cd /var/www/html; sed -i 's/read uname/uname=root/' xvwa-setup.sh && \
-    sed -i "s/read pass/pass=$PASS/" xvwa-setup.sh && \
-    sed -i "s;read webroot;webroot=/var/www/html;" xvwa-setup.sh  && \
-    bash xvwa-setup.sh && \
-    sed -i 's/localhost/127.0.0.1/' xvwa/config.php
+    sed -i "s/read pass/pass=root/" xvwa-setup.sh && \
+    sed -i "s;read webroot;webroot=/var/www/html;" xvwa-setup.sh
+# sed -i 's/localhost/127.0.0.1/' xvwa/config.php
+#  echo root | bash xvwa-setup.sh && \
 # wget https://raw.githubusercontent.com/stamparm/DSVW/master/dsvw.py
+#
+# Fix php-fpm
+RUN sed -i 's/^listen =.*/listen = 127.0.0.1:8000/' /etc/php-fpm.d/www.conf ; sed -i 's;.*Handler.*;SetHandler "proxy:fcgi://localhost";' /etc/httpd/conf.d/php.conf
 
 
-EXPOSE 22:22 80:80 8080:8080 3000:3000 3306
+EXPOSE 22 80 8080 3000 3306
 
 CMD "/root/bin/start.sh"
