@@ -93,7 +93,7 @@ mysql -u root -p$PASS -e "CREATE DATABASE IF NOT EXISTS xvwa"
 mkdir /run/php-fpm
 php-fpm &
 # Run apache
-sed -i 's;SetHandler .*;Handler application/x-httpd-php;' /etc/httpd/conf.d/php.conf
+sed -i 's;SetHandler .*;SetHandler application/x-httpd-php;' /etc/httpd/conf.d/php.conf
 /usr/sbin/httpd &
 mysqld_safe &
 
