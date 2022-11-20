@@ -38,10 +38,12 @@ ADD dvwa-install.sh /root/bin/dvwa-install.sh
 RUN \
 	mkdir /root/mutillidae && \
 	cd /root/mutillidae && \
-  wget -O /root/mutillidae/mutillidae.zip http://sourceforge.net/projects/mutillidae/files/latest/download && \
+  wget -O /root/mutillidae/mutillidae.zip https://github.com/webpwnized/mutillidae/archive/refs/heads/master.zip && \
   unzip /root/mutillidae/mutillidae.zip && \
   cp -r /root/mutillidae/mutillidae /var/www/html/  && \
   rm -rf /root/mutillidae
+## Old download link : http://sourceforge.net/projects/mutillidae/files/latest/download
+
 
 RUN \
   sed -i 's/static public \$mMySQLDatabaseUsername =.*/static public \$mMySQLDatabaseUsername = "root";/g' /var/www/html/mutillidae/classes/MySQLHandler.php && \
