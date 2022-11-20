@@ -40,6 +40,7 @@ RUN \
 	cd /root/mutillidae && \
   wget -O /root/mutillidae/mutillidae.zip https://github.com/webpwnized/mutillidae/archive/refs/heads/master.zip && \
   unzip /root/mutillidae/mutillidae.zip && \
+  mv /root/mutillidae/mutillidae-master /root/mutillidae/mutillidae && \
   cp -r /root/mutillidae/mutillidae /var/www/html/  && \
   rm -rf /root/mutillidae
 ## Old download link : http://sourceforge.net/projects/mutillidae/files/latest/download
